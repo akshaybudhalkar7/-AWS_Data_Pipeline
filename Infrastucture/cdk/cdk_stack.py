@@ -76,21 +76,41 @@ class DemoStack(Stack):
         #     description="The name of the created Glue job"
         # )
         #
-        # # Create a Glue Database
-        # database = aws_glue.CfnDatabase(self, "MyDatabase",
-        #     catalog_id=self.account,
-        #     database_input=aws_glue.CfnDatabase.DatabaseInputProperty(
-        #         name="etl_pipline"
-        #     )
-        # )
-        #
-        # # Create an IAM Role for Glue Crawler
-        # crawler_role = aws_iam.Role(self, "GlueCrawlerRole",
-        #                         assumed_by=aws_iam.ServicePrincipal("glue.amazonaws.com"),
-        #                         managed_policies=[
-        #                             aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole")
-        #                         ]
-        #                         )
+        # Create a Glue Database
+        database = aws_glue.CfnDatabase(self, "GlueDB",
+            catalog_id=self.account,
+            database_input=aws_glue.CfnDatabase.DatabaseInputProperty(
+                name="etl_data_pipline"
+            )
+        )
+
+        # Create an IAM Role for Glue Crawler
+        crawler_role = aws_iam.Role(self, "GlueCrawlerRole",
+                                role_name="%s-role" % id,
+                                assumed_by=aws_iam.ServicePrincipal("glue.amazonaws.com"),
+                                managed_policies=[
+                                    aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
+                                    aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess")
+                                ]
+                                )
+
+        # Create a Glue Crawler
+        crawler = aws_glue.CfnCrawler(self, f"Crawler",
+                role=crawler_role.role_arn,  # Replace with your IAM role ARN
+                database_name=database.ref,
+                targets=aws_glue.CfnCrawler.TargetsProperty(
+                    s3_targets=[aws_glue.CfnCrawler.S3TargetProperty(
+                        path= f"s3://{s3_bucket.bucket_name}"
+                    )]
+                ),
+                configuration=None,
+                schema_change_policy=aws_glue.CfnCrawler.SchemaChangePolicyProperty(
+                    update_behavior="UPDATE_IN_DATABASE",
+                    delete_behavior="DEPRECATE_IN_DATABASE"
+                ),
+                crawler_security_configuration=None,
+                description="CSV Crawler"
+            )
         #
         # # Attach inline policy to allow the role to access the S3 bucket
         # crawler_role.add_to_policy(
@@ -147,7 +167,8 @@ class DemoStack(Stack):
                                               timeout=Duration.minutes(5),
                                               log_retention=logs.RetentionDays.ONE_DAY,
                                               environment={
-                                                  "s3_bucket":s3_bucket.bucket_name
+                                                  "s3_bucket":s3_bucket.bucket_name,
+                                                  "crawler": crawler.ref
                                               }
                                            )
         #

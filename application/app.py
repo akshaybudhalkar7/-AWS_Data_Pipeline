@@ -28,7 +28,10 @@ def flatten_data(data):
 
 
 def handler(event, context):
+
     s3_bucket = os.environ.get('s3_bucket')
+    crawler = os.environ.get('crawler')
+
     api_url = "https://dogapi.dog/api/v2/breeds"  # Replace with your API URL
     try:
         response = requests.get(api_url)
@@ -58,6 +61,12 @@ def handler(event, context):
 
         print(f"File uploaded to S3 bucket '{bucket_name}' at '{s3_file_key}'")
 
+        print(f"Start Crawler{crawler}")
+
+        glue_client = boto3.client('glue', region_name='us-east-1')
+        response = glue_client.start_crawler(Name=crawler)
+
+        print('Started Crawler')
 
     except requests.exceptions.HTTPError as http_err:
         return {
