@@ -89,18 +89,19 @@ class DemoStack(Stack):
                                 role_name="%s-role" % id,
                                 assumed_by=aws_iam.ServicePrincipal("glue.amazonaws.com"),
                                 managed_policies=[
-                                    aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
+                                    aws_iam.ManagedPolicy.gfrom_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
                                     aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess")
                                 ]
                                 )
 
         # Create a Glue Crawler
         crawler = aws_glue.CfnCrawler(self, f"Crawler",
+                name="%s-crawler" % id,
                 role=crawler_role.role_arn,  # Replace with your IAM role ARN
                 database_name=database.ref,
                 targets=aws_glue.CfnCrawler.TargetsProperty(
                     s3_targets=[aws_glue.CfnCrawler.S3TargetProperty(
-                        path= f"s3://{s3_bucket.bucket_name}/files/"
+                        path= f"s3://{s3_bucket.bucket_name}/dog_data/"
                     )]
                 ),
                 configuration=None,

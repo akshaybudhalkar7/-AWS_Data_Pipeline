@@ -54,7 +54,7 @@ def handler(event, context):
         # S3 configuration
         s3_client = boto3.client('s3')
         bucket_name = s3_bucket
-        s3_file_key = 'files/dog_breed.csv'
+        s3_file_key = 'dog_data/dog_breed.csv'
 
         # Upload CSV to S3
         s3_client.put_object(Bucket=bucket_name, Key=s3_file_key, Body=csv_buffer.getvalue())
