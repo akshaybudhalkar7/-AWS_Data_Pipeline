@@ -10,7 +10,7 @@ def handler(event, context):
         response = requests.get(api_url)
         response.raise_for_status()  # Check for HTTP errors
         data = response.json()  # Parse JSON data from the API response
-
+        print("data",data)
         # Process the data or return it
         return {
             'statusCode': 200,
@@ -30,8 +30,6 @@ def handler(event, context):
         }
 
 
-    for i in data:
-        print(i)
 
 
 
