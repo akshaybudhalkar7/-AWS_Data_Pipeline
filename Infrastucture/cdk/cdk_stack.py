@@ -46,7 +46,7 @@ class DemoStack(Stack):
         # Grant the role access to the script in S3
         glue_script_bucket.grant_read(glue_role)
 
-        glue_job = aws_glue.CfnJob(self, "MyGlueJob",
+        glue_job = aws_glue.CfnJob(self, "DogGlueJob",
                                    name="my_glue_job",
                                    role=glue_role.role_arn,
                                    command=aws_glue.CfnJob.JobCommandProperty(
@@ -126,18 +126,10 @@ class DemoStack(Stack):
                                               log_retention=logs.RetentionDays.ONE_DAY,
                                               environment={
                                                   "s3_bucket":s3_bucket.bucket_name,
-                                                  "crawler": crawler.ref
+                                                  "crawler": crawler.ref,
+                                                  "glue_job":glue_job.ref
                                               }
                                            )
-        #
-        # # Grant the Lambda function permissions to access the S3 bucket
-        # spotify_bucket.grant_read(lambda_function)
-        #
-        # # Create an S3 event notification to trigger the Lambda function
-        # spotify_bucket.add_event_notification(
-        #     aws_s3.EventType.OBJECT_CREATED,
-        #     s3_notifications.LambdaDestination(lambda_function)
-        # )
 
 
 

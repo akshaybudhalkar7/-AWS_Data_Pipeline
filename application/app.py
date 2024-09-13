@@ -19,6 +19,7 @@ def check_crawler_status(crawler_name):
 
 def trigger_glue_job(job_name):
     try:
+        glue_client.
         response = glue_client.start_job_run(JobName=job_name)
         print(f"Started Glue Job: {response['JobRunId']}")
         return response['JobRunId']
@@ -94,6 +95,7 @@ def handler(event, context):
             print(f"Crawler {crawler} is in {crawler_state} state.")
 
             if crawler_state == 'READY':
+                print("glue_job_name",glue_job_name)
                 # If the crawler is done, trigger the Glue Job
                 job_run_id = trigger_glue_job(glue_job_name)
                 print(f"Glue Job {glue_job_name} triggered with run ID {job_run_id}")
