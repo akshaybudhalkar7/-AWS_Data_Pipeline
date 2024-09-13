@@ -1,0 +1,58 @@
+name: Deployment Template
+
+on:
+  workflow_call:
+    inputs:
+      region:
+        required: true
+        default: us-east-1
+        type: string
+      account:
+        required: true
+        type: string
+      account_number:
+        required: true
+        type: string
+      environment:
+        required: true
+        type: string
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::${{ inputs.account_number}}:role/${{inputs.environment}}-compare-file-utility-oidc-role
+          role-session-name: GitHubActions
+          aws-region: ${{ inputs.region }}
+
+      - name: Setup Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: 3.11
+
+      - name: Install build dependencies
+        run: pip install -r requirements_infra.txt
+
+      - name: Install python dependencies
+        run: pip install -r requirements.txt --target './application'
+
+      - name: Setup Node
+        uses: actions/setup-node@v3.5.1
+        with:
+          node-version: 20.x
+
+      - name: install aws cdk
+        run: npm install -g aws-cdk@2.139.0
+
+      - name: Run CDK Synth
+        run: cdk synth ${{ inputs.account }}
+
+      - name: run deployment
+        run: cdk deploy ${{ inputs.account }} --require-approval never --verbose

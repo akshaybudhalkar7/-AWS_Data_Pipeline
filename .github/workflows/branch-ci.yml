@@ -1,0 +1,39 @@
+name: Branch CI
+
+on:
+  push:
+    branches:
+      - main
+
+
+permissions:
+  contents: read
+  pull-requests: write
+  id-token: write
+  checks: write
+  actions: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+  call-deployment:
+    needs: build
+    uses: ./.github/workflows/deployment-template.yml
+    with:
+      environment: nonprod  # Change to the appropriate environment
+      region: us-east-1
+      account: snowman-data-pipline
+      account_number: 441058194263
