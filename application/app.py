@@ -4,6 +4,28 @@ import json
 import requests
 import pandas as pd
 from io import StringIO
+import time
+
+glue_client = boto3.client('glue', region_name='us-east-1')
+s3_client = boto3.client('s3')
+
+def check_crawler_status(crawler_name):
+    try:
+        response = glue_client.get_crawler(Name=crawler_name)
+        return response['Crawler']['State']
+    except Exception as e:
+        print(f"Error checking Crawler status: {str(e)}")
+        raise e
+
+def trigger_glue_job(job_name):
+    try:
+        response = glue_client.start_job_run(JobName=job_name)
+        print(f"Started Glue Job: {response['JobRunId']}")
+        return response['JobRunId']
+    except Exception as e:
+        print(f"Error starting Glue Job: {str(e)}")
+        raise e
+
 
 def flatten_data(data):
     flattened = []
@@ -31,6 +53,7 @@ def handler(event, context):
 
     s3_bucket = os.environ.get('s3_bucket')
     crawler = os.environ.get('crawler')
+    glue_job_name = os.environ.get('glue_job')
 
     api_url = "https://dogapi.dog/api/v2/breeds"  # Replace with your API URL
     try:
@@ -51,8 +74,6 @@ def handler(event, context):
         csv_buffer = StringIO()
         df.to_csv(csv_buffer, index=False)
 
-        # S3 configuration
-        s3_client = boto3.client('s3')
         bucket_name = s3_bucket
         s3_file_key = 'dog_data/dog_breed.csv'
 
@@ -63,10 +84,23 @@ def handler(event, context):
 
         print(f"Start Crawler{crawler}")
 
-        glue_client = boto3.client('glue', region_name='us-east-1')
         response = glue_client.start_crawler(Name=crawler)
 
         print('Started Crawler')
+
+        # Check Crawler status every 30 seconds until it is complete
+        while True:
+            crawler_state = check_crawler_status(crawler)
+            print(f"Crawler {crawler} is in {crawler_state} state.")
+
+            if crawler_state == 'READY':
+                # If the crawler is done, trigger the Glue Job
+                job_run_id = trigger_glue_job(glue_job_name)
+                print(f"Glue Job {glue_job_name} triggered with run ID {job_run_id}")
+                break
+
+            # Wait for 30 seconds before checking again
+            time.sleep(30)
 
     except requests.exceptions.HTTPError as http_err:
         return {
