@@ -23,6 +23,7 @@ class DemoStack(Stack):
             self,
             "%s-s3" % id,
             bucket_name="%s-s3" % id,
+            versioned=True
         )
         #
         # # Upload the Glue job script to S3
