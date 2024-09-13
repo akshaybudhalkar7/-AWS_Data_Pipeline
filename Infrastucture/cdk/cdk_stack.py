@@ -132,7 +132,7 @@ class DemoStack(Stack):
             managed_policies=[
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"),
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonS3FullAccess")
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess")
             ]
         )
         #
