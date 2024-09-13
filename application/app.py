@@ -19,8 +19,7 @@ def check_crawler_status(crawler_name):
 
 def trigger_glue_job(job_name):
     try:
-        glue_client.
-        response = glue_client.start_job_run(JobName=job_name)
+        response = glue_client.start_job_run(JobName=str(job_name))
         print(f"Started Glue Job: {response['JobRunId']}")
         return response['JobRunId']
     except Exception as e:
