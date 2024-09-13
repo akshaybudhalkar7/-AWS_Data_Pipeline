@@ -131,7 +131,8 @@ class DemoStack(Stack):
             assumed_by=aws_iam.ServicePrincipal("lambda.amazonaws.com"),
             managed_policies=[
                 aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSLambdaBasicExecutionRole"),
-                aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole")
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
+                aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AmazonS3FullAccess")
             ]
         )
         #
