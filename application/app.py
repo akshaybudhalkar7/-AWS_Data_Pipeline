@@ -2,7 +2,7 @@ import boto3
 import os
 import json
 import requests
-
+import pandas as pd
 
 def handler(event, context):
     api_url = "https://dogapi.dog/api/v2/breeds"  # Replace with your API URL
@@ -28,6 +28,10 @@ def handler(event, context):
             'statusCode': 500,
             'body': json.dumps({"error": str(err)})
         }
+
+
+    for i in data:
+        print(i)
 
 
 

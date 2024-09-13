@@ -138,6 +138,7 @@ class DemoStack(Stack):
         # Lambda Function to Trigger the Crawler
         lambda_function = aws_lambda.Function(self, "api_ingestion_lambda",
                                               runtime = aws_lambda.Runtime.PYTHON_3_11,
+                                              function_name="api_ingestion_lambda",
                                               handler="app.handler",
                                               code=aws_lambda.Code.from_asset(os.path.join(os.path.dirname(__file__),'..','..', 'application')),
                                               role=lambda_role,
