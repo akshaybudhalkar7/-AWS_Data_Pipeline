@@ -4,7 +4,7 @@ import json
 import requests
 
 
-def lambda_handler(event, context):
+def handler(event, context):
     api_url = "https://dogapi.dog/api/v2/breeds"  # Replace with your API URL
     try:
         response = requests.get(api_url)
