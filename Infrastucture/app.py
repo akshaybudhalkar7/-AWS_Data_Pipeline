@@ -6,7 +6,7 @@ app = App()
 
 DemoStack(
     app,
-    "snowman-etl-pipline",
+    "snowman-data-pipline",
     environment="sbx",
     env = Environment(
         account = '441058194263',
