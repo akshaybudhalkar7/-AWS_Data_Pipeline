@@ -19,11 +19,11 @@ class DemoStack(Stack):
         # spotify_bucket = aws_s3.Bucket(self, "SpotifyDataBucket")
         #
         #
-        # glue_bucket = aws_s3.Bucket(
-        #     self,
-        #     "%s-s3" % id,
-        #     bucket_name="%s-s3" % id,
-        # )
+        s3_bucket = aws_s3.Bucket(
+            self,
+            "%s-s3" % id,
+            bucket_name="%s-s3" % id,
+        )
         #
         # # Upload the Glue job script to S3
         # deployment = s3_deployment.BucketDeployment(self, "DeployGlueJobScript",
@@ -144,7 +144,10 @@ class DemoStack(Stack):
                                               code=aws_lambda.Code.from_asset(os.path.join(os.path.dirname(__file__),'..','..', 'application')),
                                               role=lambda_role,
                                               timeout=Duration.minutes(5),
-                                              log_retention=logs.RetentionDays.ONE_DAY
+                                              log_retention=logs.RetentionDays.ONE_DAY,
+                                              environment={
+                                                  "s3_bucket":s3_bucket.bucket_name
+                                              }
                                            )
         #
         # # Grant the Lambda function permissions to access the S3 bucket

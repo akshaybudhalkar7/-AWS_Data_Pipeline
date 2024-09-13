@@ -28,6 +28,7 @@ def flatten_data(data):
 
 
 def handler(event, context):
+    s3_bucket = os.environ.get('s3_bucket')
     api_url = "https://dogapi.dog/api/v2/breeds"  # Replace with your API URL
     try:
         response = requests.get(api_url)
@@ -49,7 +50,7 @@ def handler(event, context):
 
         # S3 configuration
         s3_client = boto3.client('s3')
-        bucket_name = 'akshaybudhalkar'
+        bucket_name = s3_bucket
         s3_file_key = 'files/dog_breed.csv'
 
         # Upload CSV to S3
