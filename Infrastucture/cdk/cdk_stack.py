@@ -89,7 +89,7 @@ class DemoStack(Stack):
                                 role_name="%s-role" % id,
                                 assumed_by=aws_iam.ServicePrincipal("glue.amazonaws.com"),
                                 managed_policies=[
-                                    aws_iam.ManagedPolicy.gfrom_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
+                                    aws_iam.ManagedPolicy.from_aws_managed_policy_name("service-role/AWSGlueServiceRole"),
                                     aws_iam.ManagedPolicy.from_aws_managed_policy_name("AmazonS3FullAccess")
                                 ]
                                 )
