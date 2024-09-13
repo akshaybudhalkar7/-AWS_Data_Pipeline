@@ -100,7 +100,7 @@ class DemoStack(Stack):
                 database_name=database.ref,
                 targets=aws_glue.CfnCrawler.TargetsProperty(
                     s3_targets=[aws_glue.CfnCrawler.S3TargetProperty(
-                        path= f"s3://{s3_bucket.bucket_name}"
+                        path= f"s3://{s3_bucket.bucket_name}/files/"
                     )]
                 ),
                 configuration=None,
