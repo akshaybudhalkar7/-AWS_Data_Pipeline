@@ -49,7 +49,7 @@ def handler(event, context):
 
         # S3 configuration
         s3_client = boto3.client('s3')
-        bucket_name = 'akshaybudhalkar '
+        bucket_name = 'akshaybudhalkar'
         s3_file_key = 'files/'
 
         # Upload CSV to S3
